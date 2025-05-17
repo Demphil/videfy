@@ -1,8 +1,11 @@
-FROM node:20-alpine
-WORKDIR /frontend
-COPY package.json vite.config.js tailwind.config.js postcss.config.js ./
-COPY public ./public
-COPY src ./src
-RUN npm install
-EXPOSE 3000
-CMD ["npm", "run", "dev"]
+# بناء الواجهة الأمامية
+FROM node:20 AS builder
+
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+
+# تقديم الواجهة باستخدام nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+
