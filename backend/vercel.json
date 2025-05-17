@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "Dockerfile", "use": "@vercel/docker" }
+  ],
+  "env": {
+    "DEEPAI_API_KEY": "a42fafad-3212-4e5c-8bad-e2646cefe8e1"
+  }
+}
