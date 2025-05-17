@@ -4,4 +4,6 @@ requests
 moviepy
 gtts
 deepai
-
+jinja2
+python-multipart
+gtts
