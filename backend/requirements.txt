@@ -1,1 +1,8 @@
-
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+moviepy
+gTTS
+requests
+python-dotenv
