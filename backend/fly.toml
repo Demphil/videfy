@@ -1,4 +1,4 @@
-app = "videfy-backend"  # يمكنك تغييره حسب اسم تطبيقك في Fly.io
+app = "videfy"  # يمكنك تغييره حسب اسم تطبيقك في Fly.io
 
 primary_region = "mad"  # يمكنك تغييره لأقرب منطقة إليك مثل: cdg, ams, etc.
 
