@@ -1,8 +1,7 @@
 fastapi
-uvicorn[standard]
-python-multipart
-pydantic
+uvicorn
+jinja2
 moviepy
-gTTS
 requests
-python-dotenv
+gtts
+python-multipart
