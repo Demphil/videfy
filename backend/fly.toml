@@ -1,4 +1,4 @@
-app = "اسم-تطبيقك"  # يجب تغييره إذا أنشأ لك Fly اسمًا تلقائيًا
+app = "videfy-backend"
 
 [build]
   dockerfile = "Dockerfile"
@@ -20,4 +20,3 @@ app = "اسم-تطبيقك"  # يجب تغييره إذا أنشأ لك Fly اس
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
-
