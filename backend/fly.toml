@@ -1,22 +1,33 @@
-app = "videfy-backend"
+app = "videfy-backend"  # يمكنك تغييره حسب اسم تطبيقك في Fly.io
+
+primary_region = "mad"  # يمكنك تغييره لأقرب منطقة إليك مثل: cdg, ams, etc.
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "Dockerfile"  # تأكد أن هذا الملف موجود في مجلد backend
 
 [env]
   PORT = "8080"
 
-[experimental]
-  auto_rollback = true
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
 
 [[services]]
   internal_port = 8080
   protocol = "tcp"
 
   [[services.ports]]
-    handlers = ["http"]
     port = 80
+    handlers = ["http"]
 
   [[services.ports]]
-    handlers = ["tls", "http"]
     port = 443
+    handlers = ["tls", "http"]
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "5s"
