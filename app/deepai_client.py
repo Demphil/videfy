@@ -1,6 +1,6 @@
 import requests
 
-API_KEY = "your_deepai_api_key_here"
+API_KEY = "a42fafad-3212-4e5c-8bad-e2646cefe8e1"
 
 def call_deepai(api_url, files=None, data=None):
     headers = {"api-key": API_KEY}
