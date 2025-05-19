@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Videfy | ذكاء إصطناعي للفيديو</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 Videfy - ذكاء فيديو</h1>
+
+    <form id="videoForm">
+      <label>📷 اختر صورة أو فيديو:</label>
+      <input type="file" name="media" accept="image/*,video/*" required />
+
+      <label>📝 نص السكريبت (اختياري):</label>
+      <textarea name="script" placeholder="اكتب ما تريد أن يُقال..."></textarea>
+
+      <label>🌍 اختر اللغة:</label>
+      <select name="lang">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="ko">한국어</option>
+      </select>
+
+      <button type="submit">🚀 أنشئ الفيديو</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
