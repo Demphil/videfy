@@ -24,7 +24,7 @@ async def save_upload_file_tmp(upload_file: UploadFile) -> str:
         tmp_path = tmp.name
     return tmp_path
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/templates", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
