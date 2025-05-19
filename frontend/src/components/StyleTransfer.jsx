@@ -1,27 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import axios from 'axios'
 
-export default function StyleTransfer() {
-  const [image, setImage] = useState(null);
-  const [styledImage, setStyledImage] = useState(null);
+const StyleTransfer = () => {
+  const [file, setFile] = useState(null)
+  const [styledImage, setStyledImage] = useState(null)
 
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
+  const handleTransfer = async () => {
+    if (!file) return
+    const formData = new FormData()
+    formData.append('image', file)
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/style-transfer`, {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    setStyledImage(data.styled_image_url);
-  };
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/style-transfer`, formData)
+      setStyledImage(res.data.output_url)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
-    <div className='mb-6'>
-      <h2 className='text-xl mb-2'>نقل الأسلوب الفني</h2>
-      <input type='file' accept='image/*' onChange={handleUpload} />
-      {styledImage && <img src={styledImage} alt='Styled' className='mt-2' />}
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="text-xl font-semibold mb-2">🎨 تحويل الصورة بأسلوب فني</h2>
+      <input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} />
+      <button onClick={handleTransfer} className="mt-2 px-4 py-2 bg-indigo-600 text-white rounded">
+        تطبيق النمط
+      </button>
+      {styledImage && <img src={styledImage} alt="Stylized" className="mt-4 w-full" />}
     </div>
-  );
+  )
 }
+
+export default StyleTransfer
