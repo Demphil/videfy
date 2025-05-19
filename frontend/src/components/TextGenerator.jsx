@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import axios from 'axios'
 
-export default function TextGenerator() {
-  const [prompt, setPrompt] = useState('');
-  const [output, setOutput] = useState('');
+const TextGenerator = () => {
+  const [prompt, setPrompt] = useState('')
+  const [generated, setGenerated] = useState('')
 
-  const generateText = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/generate-text`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
-    });
-    const data = await res.json();
-    setOutput(data.output);
-  };
+  const handleGenerate = async () => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/generate-text`, { prompt })
+      setGenerated(res.data.text)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
-    <div className='mb-6'>
-      <h2 className='text-xl mb-2'>توليد نصوص</h2>
-      <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} className='w-full p-2' rows='3'></textarea>
-      <button onClick={generateText} className='bg-blue-500 text-white px-4 py-2 mt-2'>توليد</button>
-      <p className='mt-2 whitespace-pre-wrap'>{output}</p>
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="text-xl font-semibold mb-2">✍️ توليد سكربت فيديو من فكرة</h2>
+      <input
+        type="text"
+        value={prompt}
+        onChange={e => setPrompt(e.target.value)}
+        placeholder="أدخل فكرتك..."
+        className="border p-2 w-full"
+      />
+      <button onClick={handleGenerate} className="mt-2 px-4 py-2 bg-purple-600 text-white rounded">
+        توليد
+      </button>
+      {generated && <p className="mt-2 bg-gray-100 p-2">{generated}</p>}
     </div>
-  );
+  )
 }
+
+export default TextGenerator
