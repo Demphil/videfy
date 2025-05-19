@@ -4,6 +4,7 @@ import TextGenerator from './components/TextGenerator';
 import StyleTransfer from './components/StyleTransfer';
 import FaceGenerator from './components/FaceGenerator';
 import ImageAnalyzer from './components/ImageAnalyzer';
+import ImageAnalyzer from './components/UploadImage';
 
 export default function App() {
   return (
