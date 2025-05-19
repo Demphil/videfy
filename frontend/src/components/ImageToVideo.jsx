@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+import axios from 'axios'
 
-export default function ImageToVideo() {
-  const [image, setImage] = useState(null);
-  const [videoUrl, setVideoUrl] = useState(null);
+const ImageToVideo = () => {
+  const [result, setResult] = useState(null)
 
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/image-to-video`, {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    setVideoUrl(data.video_url);
-  };
+  const handleGenerate = async () => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/image-to-video`)
+      setResult(res.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
-    <div className='mb-6'>
-      <h2 className='text-xl mb-2'>تحويل صورة إلى فيديو</h2>
-      <input type='file' accept='image/*' onChange={handleUpload} />
-      {videoUrl && <video controls src={videoUrl} className='mt-2' />}
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="text-xl font-semibold mb-2">🎥 تحويل صورة إلى فيديو</h2>
+      <button onClick={handleGenerate} className="px-4 py-2 bg-green-600 text-white rounded">
+        توليد الفيديو
+      </button>
+      {result && <video controls className="mt-4 w-full" src={result.video_url}></video>}
     </div>
-  );
+  )
 }
+
+export default ImageToVideo
