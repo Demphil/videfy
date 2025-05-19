@@ -1,3 +1,5 @@
+import shutil
+import tempfile
 from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -11,56 +13,59 @@ from app.style_transfer import apply_style
 
 app = FastAPI()
 
-# ملفات ثابتة (صور، جافاسكريبت، CSS)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+
+async def save_upload_file_tmp(upload_file: UploadFile) -> str:
+    suffix = "." + upload_file.filename.split(".")[-1]
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        shutil.copyfileobj(upload_file.file, tmp)
+        tmp_path = tmp.name
+    return tmp_path
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# رفع صورة (مثلاً للاستخدام العام)
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    contents = await file.read()
-    # هنا يمكن تخزين الملف مؤقتا إذا احتجت
-    # مثلاً:
-    # with open(f"temp/{file.filename}", "wb") as f:
-    #     f.write(contents)
-    return {"filename": file.filename, "size": len(contents)}
+    tmp_path = await save_upload_file_tmp(file)
+    # هنا يمكن التعامل مع الملف المؤقت (tmp_path)
+    # مثلاً تخزينه أو تحليله
+    # ثم حذف الملف المؤقت لو أردت بعد الانتهاء:
+    # os.remove(tmp_path)
+    return {"filename": file.filename, "temp_path": tmp_path}
 
-# توليد نص من مدخل نصي
 @app.post("/generate-text")
 async def api_generate_text(prompt: str = Form(...)):
     text = generate_text(prompt)
     return {"generated_text": text}
 
-# تحويل صورة إلى فيديو
 @app.post("/image-to-video")
 async def api_image_to_video(image: UploadFile = File(...)):
-    # استدعاء الدالة من app.image_to_video
-    # تأكد أن generate_video_from_image تدعم UploadFile أو تحتاج تحويل
-    video_path = await generate_video_from_image(image)
+    tmp_path = await save_upload_file_tmp(image)
+    video_path = await generate_video_from_image(tmp_path)
+    # بعد الانتهاء يمكنك حذف tmp_path إذا أردت
     return {"video_path": video_path}
 
-# توليد وجه بناءً على وصف نصي
 @app.post("/generate-face")
 async def api_generate_face(description: str = Form(...)):
     face_url = generate_face(description)
     return {"face_url": face_url}
 
-# تحليل صورة مع التعليق
 @app.post("/analyze-image")
 async def api_analyze_image(image: UploadFile = File(...)):
-    analysis = await analyze_image(image)
+    tmp_path = await save_upload_file_tmp(image)
+    analysis = await analyze_image(tmp_path)
     return {"analysis": analysis}
 
-# تطبيق ستايل على صورة باستخدام صورة أخرى
 @app.post("/style-transfer")
 async def api_style_transfer(
     content_image: UploadFile = File(...),
     style_image: UploadFile = File(...)
 ):
-    styled_image_path = await apply_style(content_image, style_image)
+    tmp_content = await save_upload_file_tmp(content_image)
+    tmp_style = await save_upload_file_tmp(style_image)
+    styled_image_path = await apply_style(tmp_content, tmp_style)
     return {"styled_image_path": styled_image_path}
