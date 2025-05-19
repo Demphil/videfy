@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-requests
-jinja2
-python-multipart
-deepai
-Axios
