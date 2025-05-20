@@ -2,13 +2,12 @@ import cloudinary
 import cloudinary.uploader
 import os
 
-# إعداد معلومات الحساب
+# إعداد معلومات الحساب من المتغيرات البيئية
 cloudinary.config(
-    cloud_name="drfivaaqk",
-    api_key="983925166616617",
-    api_secret="Bfmj-xzKmruB8NDT5cfIhRaHZg8"
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET")
 )
-
 
 def upload_image(file_path):
     response = cloudinary.uploader.upload(file_path)
