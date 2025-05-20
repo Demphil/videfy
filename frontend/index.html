@@ -1,14 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Videfy</title>
-  </head>
-  <body class="bg-gray-100 text-gray-800">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Videfy - تحريك الصور</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+        }
 
+        h1 {
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        input[type="file"],
+        textarea {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        video {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎙️ Videfy - حرك صورتك بالصوت</h1>
+
+    <form id="animate-form">
+        <label>🖼️ اختر صورة:</label>
+        <input type="file" name="image" accept="image/*" required>
+        <label>📝 أدخل النص الذي تريد تحويله إلى صوت:</label>
+        <textarea name="text" rows="4" placeholder="اكتب هنا..." required></textarea>
+        <button type="submit">🔄 حرك الصورة</button>
+    </form>
+
+    <div id="result" style="display: none;">
+        <h2>🎬 النتيجة:</h2>
+        <video id="output-video" controls></video>
+    </div>
+
+    <script>
+        document.getElementById('animate-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const response = await fetch('/animate', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            const videoElement = document.getElementById('output-video');
+            videoElement.src = data.video_url;
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+
+</body>
+</html>
