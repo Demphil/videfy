@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload Image to Cloudinary</title>
+    <title>تحريك صورة ورفعها</title>
 </head>
 <body>
-    <h1>Upload Image</h1>
-    <form action="/upload" enctype="multipart/form-data" method="post">
+    <h1>Upload and Animate Image</h1>
+    <form action="/upload-animate" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept="image/*" required>
-        <button type="submit">Upload</button>
+        <button type="submit">Animate & Upload</button>
     </form>
 
-    {% if image_url %}
-        <h2>Uploaded Image:</h2>
-        <img src="{{ image_url }}" alt="Uploaded Image" width="400">
-        <p><a href="{{ image_url }}" target="_blank">Open in new tab</a></p>
+    {% if video_url %}
+        <h2>Animated Video:</h2>
+        <video width="400" controls>
+            <source src="{{ video_url }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <p><a href="{{ video_url }}" target="_blank">View on Cloudinary</a></p>
     {% elif error %}
         <p style="color:red;">Error: {{ error }}</p>
     {% endif %}
