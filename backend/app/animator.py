@@ -1,7 +1,7 @@
 import requests
 import time
 
-DID_API_KEY = "YOUR_DID_API_KEY"
+DID_API_KEY = "Ym90b2xhcHJvc0BnbWFpbC5jb20:UDzhD73UeqWSOcY_hBfiA"
 DID_API_URL = "https://api.d-id.com"
 
 HEADERS = {
