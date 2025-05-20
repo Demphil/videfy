@@ -1,4 +1,6 @@
 fastapi
-gTTS
-cloudinary
+uvicorn
 requests
+gtts
+cloudinary
+python-multipart
