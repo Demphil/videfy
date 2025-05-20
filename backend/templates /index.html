@@ -1,9 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head><title>Videfy</title></head>
+<head>
+    <title>Upload Image to Cloudinary</title>
+</head>
 <body>
-    <h1>Videfy AI Tools</h1>
-    <p>Select a feature to start:</p>
-    <!-- UI links to tools -->
+    <h1>Upload Image</h1>
+    <form action="/upload" enctype="multipart/form-data" method="post">
+        <input type="file" name="file" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if image_url %}
+        <h2>Uploaded Image:</h2>
+        <img src="{{ image_url }}" alt="Uploaded Image" width="400">
+        <p><a href="{{ image_url }}" target="_blank">Open in new tab</a></p>
+    {% elif error %}
+        <p style="color:red;">Error: {{ error }}</p>
+    {% endif %}
 </body>
 </html>
