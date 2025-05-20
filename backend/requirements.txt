@@ -4,3 +4,8 @@ requests
 gtts
 cloudinary
 python-multipart
+
+python-dotenv
+
+jinja2
+
