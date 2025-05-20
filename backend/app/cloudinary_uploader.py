@@ -1,14 +1,46 @@
-import cloudinary
+import { v2 as cloudinary } from 'cloudinary';
+
 import cloudinary.uploader
 import os
 
-# إعداد معلومات الحساب من المتغيرات البيئية
-cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET")
-)
 
-def upload_image(file_path):
-    response = cloudinary.uploader.upload(file_path)
-    return response["secure_url"]
+(async function() {
+
+    // Configuration
+    cloudinary.config({ 
+        cloud_name: 'CLOUDINARY_CLOUD_NAME', 
+        api_key: 'CLOUDINARY_API_KEY', 
+        api_secret: 'CLOUDINARY_API_SECRET' // Click 'View API Keys' above to copy your API secret
+    });
+    
+    // Upload an image
+     const uploadResult = await cloudinary.uploader
+       .upload(
+           'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
+               public_id: 'shoes',
+           }
+       )
+       .catch((error) => {
+           console.log(error);
+       });
+    
+    console.log(uploadResult);
+    
+    // Optimize delivery by resizing and applying auto-format and auto-quality
+    const optimizeUrl = cloudinary.url('shoes', {
+        fetch_format: 'auto',
+        quality: 'auto'
+    });
+    
+    console.log(optimizeUrl);
+    
+    // Transform the image: auto-crop to square aspect_ratio
+    const autoCropUrl = cloudinary.url('shoes', {
+        crop: 'auto',
+        gravity: 'auto',
+        width: 500,
+        height: 500,
+    });
+    
+    console.log(autoCropUrl);    
+})();
