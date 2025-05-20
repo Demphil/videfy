@@ -2,6 +2,11 @@ from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import JSONResponse
 import shutil
 import os
+from dotenv import load_dotenv
+
+# تحميل المتغيرات من ملف .env
+load_dotenv()
+
 
 from app.tts import text_to_speech
 from app.cloudinary_uploader import upload_image
