@@ -1,62 +1,90 @@
+import os
 import requests
-import time
+from gtts import gTTS
+import cloudinary
+import cloudinary.uploader
 
+# إعداد Cloudinary
+cloudinary.config(
+    cloud_name="drfivaaqk",
+    api_key="983925166616617",
+    api_secret="Bfmj-xzKmruB8NDT5cfIhRaHZg8"
+)
+
+# إعداد مفتاح D-ID
 DID_API_KEY = "Ym90b2xhcHJvc0BnbWFpbC5jb20:UDzhD73UeqWSOcY_hBfiA"
-DID_API_URL = "https://api.d-id.com"
 
-HEADERS = {
-    "Authorization": f"Bearer {DID_API_KEY}"
-}
+# 1. تحويل النص إلى صوت
+def text_to_speech(text, output_file="output.mp3", lang="ar"):
+    tts = gTTS(text=text, lang=lang)
+    tts.save(output_file)
+    return output_file
 
+# 2. رفع صورة إلى Cloudinary
+def upload_image(image_path):
+    result = cloudinary.uploader.upload(image_path)
+    return result["secure_url"]
+
+# 3. رفع صوت إلى D-ID
 def upload_audio(audio_path):
-    with open(audio_path, "rb") as audio_file:
-        files = {'file': audio_file}
-        response = requests.post(f"{DID_API_URL}/upload", headers=HEADERS, files=files)
-    
-    if response.status_code == 200:
+    with open(audio_path, "rb") as f:
+        response = requests.post(
+            "https://api.d-id.com/audio",
+            headers={"Authorization": f"api-key {DID_API_KEY}"},
+            files={"audio": f}
+        )
+    if response.ok:
         return response.json()["url"]
     else:
-        raise Exception("❌ فشل في رفع الصوت إلى D-ID")
+        raise Exception(f"رفع الصوت فشل: {response.text}")
 
-def create_talking_video(image_url, audio_url):
+# 4. تحريك الصورة بالصوت
+def animate_image(image_url, audio_url):
     payload = {
         "source_url": image_url,
-        "script": {
-            "type": "audio",
-            "audio_url": audio_url
-        }
+        "audio_url": audio_url
     }
 
-    response = requests.post(f"{DID_API_URL}/talks", json=payload, headers=HEADERS)
+    response = requests.post(
+        "https://api.d-id.com/talks",
+        headers={
+            "Authorization": f"api-key {DID_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json=payload
+    )
 
-    if response.status_code == 201:
-        return response.json()["id"]
+    if response.ok:
+        talk_id = response.json()["id"]
+        return talk_id
     else:
-        raise Exception("❌ فشل في إنشاء الفيديو على D-ID")
+        raise Exception(f"فشل في إرسال الطلب: {response.text}")
 
+# 5. جلب الفيديو النهائي
 def get_video_url(talk_id):
-    for _ in range(30):  # انتظار لحد 30 ثانية كحد أقصى
-        time.sleep(2)
-        response = requests.get(f"{DID_API_URL}/talks/{talk_id}", headers=HEADERS)
+    url = f"https://api.d-id.com/talks/{talk_id}"
+    while True:
+        res = requests.get(url, headers={"Authorization": f"api-key {DID_API_KEY}"})
+        data = res.json()
+        if data.get("result_url"):
+            return data["result_url"]
 
-        if response.status_code == 200:
-            data = response.json()
-            if data["status"] == "done":
-                return data["result_url"]
-        else:
-            raise Exception("❌ فشل في التحقق من حالة الفيديو")
-    
-    raise Exception("⏳ انتهى الوقت دون إنشاء الفيديو")
+# 🔁 تشغيل العملية الكاملة
+def animate(text, image_path):
+    print("🔊 تحويل النص إلى صوت...")
+    audio_path = text_to_speech(text)
 
-def animate_image_with_audio(image_url, audio_path):
-    print("⏫ رفع الصوت...")
+    print("📤 رفع الصورة إلى Cloudinary...")
+    image_url = upload_image(image_path)
+
+    print("🎧 رفع الصوت إلى D-ID...")
     audio_url = upload_audio(audio_path)
 
-    print("🎬 بدء تحريك الصورة...")
-    talk_id = create_talking_video(image_url, audio_url)
+    print("🎞️ تحريك الصورة بالصوت...")
+    talk_id = animate_image(image_url, audio_url)
 
-    print("⏳ انتظار اكتمال الفيديو...")
+    print("⏳ انتظار الفيديو...")
     video_url = get_video_url(talk_id)
 
-    print("✅ الفيديو جاهز!")
+    print("✅ الفيديو النهائي:", video_url)
     return video_url
